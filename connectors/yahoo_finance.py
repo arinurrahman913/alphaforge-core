@@ -1,5 +1,7 @@
 import yfinance as yf
 
+from models.company import Company
+
 
 class YahooFinanceConnector:
 
@@ -9,11 +11,12 @@ class YahooFinanceConnector:
 
         info = stock.info
 
-        return {
-            "ticker": ticker,
-            "company": info.get("longName"),
-            "sector": info.get("sector"),
-            "industry": info.get("industry"),
-            "market_cap": info.get("marketCap"),
-            "current_price": info.get("currentPrice"),
-        }
+        return Company(
+            ticker=ticker,
+            name=info.get("longName"),
+            exchange=info.get("exchange"),
+            sector=info.get("sector"),
+            industry=info.get("industry"),
+            current_price=info.get("currentPrice"),
+            market_cap=info.get("marketCap"),
+        )
