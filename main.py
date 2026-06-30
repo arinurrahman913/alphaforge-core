@@ -14,7 +14,7 @@ def main():
 
     connector = YahooFinanceConnector()
 
-    company = connector.get_company("MSFT")
+    company = connector.get_company("NVDA")
 
     print("Company    :", company["company"])
     print("Ticker     :", company["ticker"])
