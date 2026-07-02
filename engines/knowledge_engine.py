@@ -1,8 +1,10 @@
 from core.base_engine import BaseEngine
-from enums.company_category import CompanyCategory
-from enums.confidence_level import ConfidenceLevel
 from core.base_package import BasePackage
+
 from enums.package_type import PackageType
+from enums.company_category import CompanyCategory
+
+from models.knowledge import Knowledge
 
 
 class KnowledgeEngine(BaseEngine):
@@ -25,14 +27,14 @@ class KnowledgeEngine(BaseEngine):
         else:
             category = CompanyCategory.SMALL_CAP
 
-        knowledge = {
-            "ticker": company.ticker,
-            "company": company.name,
-            "sector": company.sector,
-            "industry": company.industry,
-            "category": category.value,
-            "confidence": ConfidenceLevel.HIGH.value,
-        }
+        knowledge = Knowledge(
+            ticker=company.ticker,
+            company=company.name,
+            exchange=company.exchange,
+            sector=company.sector,
+            industry=company.industry,
+            category=category,
+        )
 
         return BasePackage(
             package_type=PackageType.KNOWLEDGE,
