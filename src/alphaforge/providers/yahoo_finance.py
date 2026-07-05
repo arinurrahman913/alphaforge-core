@@ -2,6 +2,7 @@ import yfinance as yf
 
 from alphaforge.models.company import Company
 from alphaforge.models.news import NewsArticle
+from alphaforge.models.financial import FinancialSnapshot
 
 
 def get_company_profile(ticker: str) -> Company:
@@ -68,3 +69,34 @@ if __name__ == "__main__":
         print(article.publisher)
         print(article.link)
         print("-" * 50)
+
+def get_financial_snapshot(ticker: str) -> FinancialSnapshot:
+    """
+    Fetch financial snapshot from Yahoo Finance.
+    """
+
+    stock = yf.Ticker(ticker)
+    info = stock.info
+
+    return FinancialSnapshot(
+        ticker=ticker.upper(),
+
+        market_cap=info.get("marketCap"),
+        revenue=info.get("totalRevenue"),
+        net_income=info.get("netIncomeToCommon"),
+
+        eps=info.get("trailingEps"),
+
+        pe=info.get("trailingPE"),
+        forward_pe=info.get("forwardPE"),
+
+        roe=info.get("returnOnEquity"),
+
+        gross_margin=info.get("grossMargins"),
+        operating_margin=info.get("operatingMargins"),
+
+        cash=info.get("totalCash"),
+        debt=info.get("totalDebt"),
+
+        free_cash_flow=info.get("freeCashflow"),
+    )
