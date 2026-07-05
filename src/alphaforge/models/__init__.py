@@ -1,0 +1,3 @@
+"""
+AlphaForge data models.
+"""
