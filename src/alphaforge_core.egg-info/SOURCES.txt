@@ -1,0 +1,9 @@
+README.md
+pyproject.toml
+src/alphaforge/__init__.py
+src/alphaforge/cli.py
+src/alphaforge/main.py
+src/alphaforge_core.egg-info/PKG-INFO
+src/alphaforge_core.egg-info/SOURCES.txt
+src/alphaforge_core.egg-info/dependency_links.txt
+src/alphaforge_core.egg-info/top_level.txt
