@@ -9,6 +9,7 @@ from alphaforge.services.financial_service import get_financial
 from alphaforge.services.news_service import get_news
 from alphaforge.services.price_summary_service import get_price_summary
 from alphaforge.services.quote_service import get_quote
+from alphaforge.services.technical_service import get_technical_summary
 
 
 def analyze(ticker: str):
@@ -19,6 +20,7 @@ def analyze(ticker: str):
     quote = get_quote(ticker)
     financial = get_financial(ticker)
     summary = get_price_summary(ticker)
+    technical, analysis = get_technical_summary(ticker)
     news = get_news(ticker)
 
     print("=" * 80)
@@ -40,7 +42,10 @@ def analyze(ticker: str):
 
     print(f"Current Price  : {format_money(quote.current_price)}")
     print(f"Previous Close : {format_money(quote.previous_close)}")
-    print(f"Change         : {format_money(quote.change)} ({format_percent(quote.change_percent)})")
+    print(
+        f"Change         : {format_money(quote.change)} "
+        f"({format_percent(quote.change_percent)})"
+    )
 
     print()
 
@@ -86,6 +91,38 @@ def analyze(ticker: str):
     print()
 
     print("=" * 80)
+    print("TECHNICAL ANALYSIS")
+    print("=" * 80)
+
+    print()
+
+    print(f"Trend      : {analysis.trend}")
+    print(f"Confidence : {analysis.confidence}%")
+
+    print()
+
+    print("Evidence")
+    print("--------")
+
+    for item in analysis.evidence:
+        print(f"✓ {item}")
+
+    print()
+
+    print("Recommendation")
+    print("--------------")
+    print(analysis.recommendation)
+
+    print()
+
+    print("Indicators")
+    print("----------")
+    print(f"SMA20 : {format_money(technical.sma20.value)}")
+    print(f"SMA50 : {format_money(technical.sma50.value)}")
+
+    print()
+
+    print("=" * 80)
     print("LATEST NEWS")
     print("=" * 80)
 
@@ -93,9 +130,7 @@ def analyze(ticker: str):
         print("No news available.")
 
     else:
-
         for i, article in enumerate(news[:5], start=1):
-
             print(f"{i}. {article.title}")
             print(f"   {article.publisher}")
             print()

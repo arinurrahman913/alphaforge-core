@@ -8,16 +8,23 @@ from alphaforge.models.analysis import (
     StockAnalysis,
     TechnicalIndicators,
 )
+
 from alphaforge.models.company import Company
 from alphaforge.models.financial import FinancialSnapshot
 from alphaforge.models.news import NewsArticle
 from alphaforge.models.price import PriceBar
-from alphaforge.models.quote import StockQuote
 from alphaforge.models.price_summary import PriceSummary
+from alphaforge.models.quote import StockQuote
+
 from alphaforge.models.stock import (
     PriceHistory,
     StockFundamentals,
-    StockQuote,
+)
+
+from alphaforge.models.technical import (
+    MovingAverage,
+    TechnicalSummary,
+    TechnicalAnalysis,
 )
 
 __all__ = [
@@ -27,11 +34,13 @@ __all__ = [
     "NewsArticle",
     "PriceBar",
     "PriceHistory",
+    "PriceSummary",
     "Signal",
     "StockAnalysis",
     "StockFundamentals",
     "StockQuote",
     "TechnicalIndicators",
-    "PriceSummary",
-    "StockQuote",
+    "MovingAverage",
+    "TechnicalSummary",
+    "TechnicalAnalysis",
 ]
