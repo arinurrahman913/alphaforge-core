@@ -4,6 +4,7 @@ from alphaforge.services.news_service import get_news
 from alphaforge.services.price_summary_service import get_price_summary
 from alphaforge.services.quote_service import get_quote
 from alphaforge.services.technical_service import get_technical_summary
+from alphaforge.services.knowledge_service import build_knowledge
 
 
 class AnalyzeService:
@@ -27,6 +28,7 @@ class AnalyzeService:
         summary = get_price_summary(ticker)
         technical, analysis = get_technical_summary(ticker)
         news = get_news(ticker)
+        knowledge = build_knowledge(financial)
 
         return {
             "ticker": ticker,
@@ -37,4 +39,5 @@ class AnalyzeService:
             "technical": technical,
             "technical_analysis": analysis,
             "news": news,
+            "knowledge": knowledge,
         }
