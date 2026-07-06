@@ -10,18 +10,24 @@ from alphaforge.services.news_service import get_news
 from alphaforge.services.price_summary_service import get_price_summary
 from alphaforge.services.quote_service import get_quote
 from alphaforge.services.technical_service import get_technical_summary
+from alphaforge.services.analyze_service import AnalyzeService
 
 
 def analyze(ticker: str):
 
     ticker = ticker.upper()
 
-    company = get_company_profile(ticker)
-    quote = get_quote(ticker)
-    financial = get_financial(ticker)
-    summary = get_price_summary(ticker)
-    technical, analysis = get_technical_summary(ticker)
-    news = get_news(ticker)
+    service = AnalyzeService()
+    result = service.run(ticker)
+
+    ticker = result["ticker"]
+    company = result["company"]
+    quote = result["quote"]
+    financial = result["financial"]
+    summary = result["price_summary"]
+    technical = result["technical"]
+    analysis = result["technical_analysis"]
+    news = result["news"]
 
     print("=" * 80)
     print("AlphaForge Core v0.1.0".center(80))
