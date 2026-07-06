@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 
+from alphaforge.models.financial import FinancialSnapshot
+
 
 @dataclass
 class KnowledgeItem:
@@ -12,89 +14,66 @@ class KnowledgeItem:
 
 class KnowledgeEngine:
 
-    def build(self, financial) -> List[KnowledgeItem]:
+    def build(self, financial: FinancialSnapshot) -> List[KnowledgeItem]:
 
-        knowledge = []
-
-        #
-        # Gross Margin
-        #
+        items: List[KnowledgeItem] = []
 
         if financial.gross_margin is not None:
-
             if financial.gross_margin >= 60:
-
-                knowledge.append(
+                items.append(
                     KnowledgeItem(
-                        category="Profitability",
-                        title="Excellent Gross Margin",
-                        description="Gross margin is above 60%, indicating exceptional pricing power.",
-                        confidence=95,
+                        "Profitability",
+                        "Excellent Gross Margin",
+                        "Gross margin above 60% indicates exceptional pricing power.",
+                        95,
                     )
                 )
-
             elif financial.gross_margin >= 40:
-
-                knowledge.append(
+                items.append(
                     KnowledgeItem(
-                        category="Profitability",
-                        title="Healthy Gross Margin",
-                        description="Gross margin supports strong profitability.",
-                        confidence=85,
+                        "Profitability",
+                        "Healthy Gross Margin",
+                        "Gross margin supports long-term profitability.",
+                        85,
                     )
                 )
 
-        #
-        # ROE
-        #
-
-        if financial.roe is not None:
-
-            if financial.roe >= 20:
-
-                knowledge.append(
-                    KnowledgeItem(
-                        category="Management",
-                        title="High Return on Equity",
-                        description="Company generates excellent shareholder returns.",
-                        confidence=90,
-                    )
+        if financial.roe is not None and financial.roe >= 20:
+            items.append(
+                KnowledgeItem(
+                    "Management",
+                    "High Return on Equity",
+                    "The company generates outstanding shareholder returns.",
+                    90,
                 )
+            )
 
-        #
-        # Balance Sheet
-        #
-
-        if financial.cash is not None and financial.debt is not None:
-
-            if financial.cash > financial.debt:
-
-                knowledge.append(
-                    KnowledgeItem(
-                        category="Financial Health",
-                        title="Strong Balance Sheet",
-                        description="Cash exceeds debt, providing financial flexibility.",
-                        confidence=92,
-                    )
+        if (
+            financial.cash is not None
+            and financial.debt is not None
+            and financial.cash > financial.debt
+        ):
+            items.append(
+                KnowledgeItem(
+                    "Financial Health",
+                    "Strong Balance Sheet",
+                    "Cash exceeds debt, giving the company strong financial flexibility.",
+                    92,
                 )
-
-        #
-        # Forward PE
-        #
+            )
 
         if (
             financial.pe is not None
             and financial.forward_pe is not None
             and financial.forward_pe < financial.pe
         ):
-
-            knowledge.append(
+            items.append(
                 KnowledgeItem(
-                    category="Valuation",
-                    title="Forward Valuation Improving",
-                    description="Forward PE is lower than current PE, suggesting earnings growth.",
-                    confidence=88,
+                    "Valuation",
+                    "Forward Valuation Improving",
+                    "Forward PE is lower than current PE, indicating expected earnings growth.",
+                    88,
                 )
             )
 
-        return knowledge
+        return items
