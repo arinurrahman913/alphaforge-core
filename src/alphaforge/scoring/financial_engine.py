@@ -22,194 +22,110 @@ class FinancialScoringEngine:
             grade="",
         )
 
-        #
-        # ROE
-        #
+        self._evaluate_roe(result, financial)
+        self._evaluate_gross_margin(result, financial)
+        self._evaluate_balance_sheet(result, financial)
+        self._evaluate_free_cash_flow(result, financial)
+        self._calculate_grade(result)
 
-        if financial.roe is not None:
+        return result
 
-            if financial.roe >= 20:
+    def _evaluate_roe(self, result: ScoreResult, financial: FinancialSnapshot):
 
-                result.total += 10
+        if financial.roe is None:
+            return
 
-                result.items.append(
+        score = 0
+        reason = "ROE below preferred threshold."
 
-                    ScoreItem(
+        if financial.roe >= 20:
+            score = 10
+            reason = "ROE above 20% indicates outstanding capital efficiency."
+        elif financial.roe >= 15:
+            score = 8
+            reason = "ROE indicates healthy profitability."
 
-                        name="Return on Equity",
+        result.total += score
 
-                        value=f"{financial.roe:.2f}%",
-
-                        score=10,
-
-                        category="Profitability",
-
-                        reason=(
-                            "ROE above 20% indicates outstanding "
-                            "capital efficiency."
-                        ),
-
-                    )
-
-                )
-
-            elif financial.roe >= 15:
-
-                result.total += 8
-
-                result.items.append(
-
-                    ScoreItem(
-
-                        name="Return on Equity",
-
-                        value=f"{financial.roe:.2f}%",
-
-                        score=8,
-
-                        category="Profitability",
-
-                        reason=(
-                            "ROE indicates healthy profitability."
-                        ),
-
-                    )
-
-                )
-
-        #
-        # Gross Margin
-        #
-
-        if financial.gross_margin is not None:
-
-            if financial.gross_margin >= 60:
-
-                result.total += 10
-
-                result.items.append(
-
-                    ScoreItem(
-
-                        name="Gross Margin",
-
-                        value=f"{financial.gross_margin:.2f}%",
-
-                        score=10,
-
-                        category="Profitability",
-
-                        reason=(
-                            "Excellent pricing power."
-                        ),
-
-                    )
-
-                )
-
-        #
-        # Cash vs Debt
-        #
-
-        if (
-            financial.cash is not None
-            and financial.debt is not None
-        ):
-
-            if financial.cash > financial.debt:
-
-                result.total += 10
-
-                result.items.append(
-
-                    ScoreItem(
-
-                        name="Balance Sheet",
-
-                        value="Cash > Debt",
-
-                        score=10,
-
-                        category="Financial Health",
-
-                        reason=(
-                            "Strong balance sheet with net cash."
-                        ),
-
-                    )
-
-                )
-
-            else:
-
-                result.items.append(
-
-                    ScoreItem(
-
-                        name="Balance Sheet",
-
-                        value="Debt > Cash",
-
-                        score=0,
-
-                        category="Financial Health",
-
-                        reason=(
-                            "Debt exceeds cash."
-                        ),
-
-                    )
-
-                )
-
-        #
-        # Free Cash Flow
-        #
-
-        if (
-            financial.free_cash_flow is not None
-            and financial.free_cash_flow > 0
-        ):
-
-            result.total += 10
-
+        if score > 0:
             result.items.append(
-
                 ScoreItem(
-
-                    name="Free Cash Flow",
-
-                    value="Positive",
-
-                    score=10,
-
-                    category="Cash Flow",
-
-                    reason=(
-                        "Business generates positive free cash flow."
-                    ),
-
+                    name="Return on Equity",
+                    value=f"{financial.roe:.2f}%",
+                    score=score,
+                    category="Profitability",
+                    reason=reason,
                 )
-
             )
 
-        #
-        # Grade
-        #
+    def _evaluate_gross_margin(self, result: ScoreResult, financial: FinancialSnapshot):
+
+        if financial.gross_margin is None:
+            return
+
+        if financial.gross_margin >= 60:
+            result.total += 10
+            result.items.append(
+                ScoreItem(
+                    name="Gross Margin",
+                    value=f"{financial.gross_margin:.2f}%",
+                    score=10,
+                    category="Profitability",
+                    reason="Excellent pricing power.",
+                )
+            )
+
+    def _evaluate_balance_sheet(self, result: ScoreResult, financial: FinancialSnapshot):
+
+        if financial.cash is None or financial.debt is None:
+            return
+
+        if financial.cash > financial.debt:
+            result.total += 10
+            score = 10
+            value = "Cash > Debt"
+            reason = "Strong balance sheet with net cash."
+        else:
+            score = 0
+            value = "Debt > Cash"
+            reason = "Debt exceeds cash."
+
+        result.items.append(
+            ScoreItem(
+                name="Balance Sheet",
+                value=value,
+                score=score,
+                category="Financial Health",
+                reason=reason,
+            )
+        )
+
+    def _evaluate_free_cash_flow(self, result: ScoreResult, financial: FinancialSnapshot):
+
+        if financial.free_cash_flow is None:
+            return
+
+        if financial.free_cash_flow > 0:
+            result.total += 10
+            result.items.append(
+                ScoreItem(
+                    name="Free Cash Flow",
+                    value="Positive",
+                    score=10,
+                    category="Cash Flow",
+                    reason="Business generates positive free cash flow.",
+                )
+            )
+
+    def _calculate_grade(self, result: ScoreResult):
 
         if result.total >= 36:
             result.grade = "Excellent"
-
         elif result.total >= 30:
             result.grade = "Very Good"
-
         elif result.total >= 24:
             result.grade = "Good"
-
         elif result.total >= 16:
             result.grade = "Average"
-
         else:
             result.grade = "Weak"
-
-        return result
