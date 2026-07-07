@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from time import perf_counter
 
+from alphaforge.scoring.financial_engine import FinancialScoringEngine
+
 from alphaforge.services.company_service import get_company_profile
 from alphaforge.services.evidence_service import build_evidence
 from alphaforge.services.financial_service import get_financial
@@ -14,24 +16,14 @@ from alphaforge.services.technical_service import get_technical_summary
 
 
 class AnalysisEngine:
-    """
-    AlphaForge Analysis Engine
-
-    Central orchestration layer.
-
-    Sprint 004A
-    - Error isolation
-    - Stage timing
-    - Metadata collection
-    - Backward compatible output
-    """
 
     def __init__(self):
+
         self.metadata = {}
+        self.financial_scoring = FinancialScoringEngine()
 
     def run(self, ticker: str) -> dict:
 
-        # reset metadata setiap menjalankan analisis baru
         self.metadata = {}
 
         ticker = ticker.upper()
@@ -96,6 +88,19 @@ class AnalysisEngine:
                 lambda: build_reasoning(evidence),
             )
 
+        #
+        # NEW : Financial Score
+        #
+
+        financial_score = None
+
+        if financial is not None:
+
+            financial_score = self._safe_execute(
+                "financial_score",
+                lambda: self.financial_scoring.score(financial),
+            )
+
         return {
             "ticker": ticker,
             "company": company,
@@ -108,6 +113,7 @@ class AnalysisEngine:
             "knowledge": knowledge,
             "evidence": evidence,
             "reasoning": reasoning,
+            "financial_score": financial_score,
             "metadata": self.metadata,
         }
 
@@ -116,6 +122,7 @@ class AnalysisEngine:
         started = perf_counter()
 
         try:
+
             result = func()
 
             self.metadata[stage] = {
