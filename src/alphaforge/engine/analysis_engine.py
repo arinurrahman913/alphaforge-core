@@ -3,15 +3,14 @@ from __future__ import annotations
 from time import perf_counter
 
 from alphaforge.services.company_service import get_company_profile
+from alphaforge.services.evidence_service import build_evidence
 from alphaforge.services.financial_service import get_financial
+from alphaforge.services.knowledge_service import build_knowledge
 from alphaforge.services.news_service import get_news
 from alphaforge.services.price_summary_service import get_price_summary
 from alphaforge.services.quote_service import get_quote
-from alphaforge.services.technical_service import get_technical_summary
-
-from alphaforge.services.knowledge_service import build_knowledge
-from alphaforge.services.evidence_service import build_evidence
 from alphaforge.services.reasoning_service import build_reasoning
+from alphaforge.services.technical_service import get_technical_summary
 
 
 class AnalysisEngine:
@@ -28,10 +27,12 @@ class AnalysisEngine:
     """
 
     def __init__(self):
-
         self.metadata = {}
 
     def run(self, ticker: str) -> dict:
+
+        # reset metadata setiap menjalankan analisis baru
+        self.metadata = {}
 
         ticker = ticker.upper()
 
@@ -115,7 +116,6 @@ class AnalysisEngine:
         started = perf_counter()
 
         try:
-
             result = func()
 
             self.metadata[stage] = {
