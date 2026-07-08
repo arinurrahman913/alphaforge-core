@@ -69,14 +69,17 @@ def get_technical_summary(ticker: str):
     if current_price > sma20 and sma20 > sma50:
         trend = "Strong Bullish"
 
-    elif current_price > sma20:
-        trend = "Bullish"
+    elif current_price > sma20 and sma20 <= sma50:
+        trend = "Bearish Rebound"
+
+    elif current_price <= sma20 and sma20 > sma50:
+        trend = "Bullish Pullback"
 
     elif current_price < sma20 and sma20 < sma50:
         trend = "Strong Bearish"
 
     else:
-        trend = "Bearish"
+        trend = "Neutral"
 
     confidence = max(0, min(confidence, 100))
 
@@ -87,13 +90,19 @@ def get_technical_summary(ticker: str):
             "Belum ada sinyal pelemahan."
         )
 
-    elif trend == "Bullish":
+    elif trend == "Bullish Pullback":
         recommendation = (
-            "Trend positif. "
-            "Pantau apakah harga mampu bertahan di atas SMA20."
+            "Trend jangka menengah masih naik, tapi harga sedang koreksi. "
+            "Pantau apakah SMA20 bisa jadi support."
         )
 
-    elif trend == "Bearish":
+    elif trend == "Bearish Rebound":
+        recommendation = (
+            "Trend jangka menengah masih turun, harga sedang technical rebound. "
+            "Waspadai potensi pelemahan lanjutan."
+        )
+
+    elif trend == "Strong Bearish":
         recommendation = (
             "Momentum mulai melemah. "
             "Perhatikan support terdekat."

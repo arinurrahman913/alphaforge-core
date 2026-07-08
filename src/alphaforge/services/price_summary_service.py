@@ -1,3 +1,4 @@
+from alphaforge.foundation.exceptions import DataError
 from alphaforge.models.price_summary import PriceSummary
 from alphaforge.services.price_service import get_prices
 
@@ -9,6 +10,11 @@ def get_price_summary(
 
     prices = get_prices(ticker, period)
 
+    if not prices:
+        raise DataError(
+            f"No price data available for {ticker} (period={period})."
+        )
+
     first = prices[0]
     last = prices[-1]
 
@@ -19,10 +25,13 @@ def get_price_summary(
 
     average_volume = sum(p.volume for p in prices) / len(prices)
 
-    total_return = (
-        (last.close - first.close)
-        / first.close
-    )
+    if first.close == 0:
+        total_return = 0.0
+    else:
+        total_return = (
+            (last.close - first.close)
+            / first.close
+        )
 
     return PriceSummary(
         current_price=current_price,

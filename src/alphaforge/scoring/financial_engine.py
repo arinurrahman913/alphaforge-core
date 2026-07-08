@@ -8,7 +8,9 @@ from alphaforge.scoring.models import (
 
 class FinancialScoringEngine:
 
-    MAXIMUM_SCORE = 40
+    # Poin maksimal yang benar-benar achievable dari semua kriteria di bawah:
+    # ROE (10) + Gross Margin (15) + Balance Sheet (10) + Free Cash Flow (10) = 45
+    MAXIMUM_SCORE = 45
 
     def score(
         self,
@@ -38,10 +40,12 @@ class FinancialScoringEngine:
         score = 0
         reason = "ROE below preferred threshold."
 
-        if financial.roe >= 20:
+        roe = financial.roe * 100 if financial.roe is not None and financial.roe <= 1 else financial.roe
+
+        if roe >= 20:
             score = 10
             reason = "ROE above 20% indicates outstanding capital efficiency."
-        elif financial.roe >= 15:
+        elif roe >= 15:
             score = 8
             reason = "ROE indicates healthy profitability."
 
@@ -51,7 +55,7 @@ class FinancialScoringEngine:
             result.items.append(
                 ScoreItem(
                     name="Return on Equity",
-                    value=f"{financial.roe:.2f}%",
+                    value=f"{roe:.2f}%",
                     score=score,
                     category="Profitability",
                     reason=reason,
@@ -63,13 +67,15 @@ class FinancialScoringEngine:
         if financial.gross_margin is None:
             return
 
-        if financial.gross_margin >= 60:
-            result.total += 10
+        margin = financial.gross_margin * 100 if financial.gross_margin is not None and financial.gross_margin <= 1 else financial.gross_margin
+
+        if margin >= 60:
+            result.total += 15
             result.items.append(
                 ScoreItem(
                     name="Gross Margin",
-                    value=f"{financial.gross_margin:.2f}%",
-                    score=10,
+                    value=f"{margin:.2f}%",
+                    score=15,
                     category="Profitability",
                     reason="Excellent pricing power.",
                 )
@@ -119,13 +125,17 @@ class FinancialScoringEngine:
 
     def _calculate_grade(self, result: ScoreResult):
 
-        if result.total >= 36:
-            result.grade = "Excellent"
-        elif result.total >= 30:
-            result.grade = "Very Good"
-        elif result.total >= 24:
-            result.grade = "Good"
-        elif result.total >= 16:
-            result.grade = "Average"
+        percent = (result.total / result.maximum) * 100
+
+        if percent >= 90:
+            result.grade = 'S'
+        elif percent >= 80:
+            result.grade = 'A'
+        elif percent >= 70:
+            result.grade = 'B'
+        elif percent >= 60:
+            result.grade = 'C'
+        elif percent >= 40:
+            result.grade = 'D'
         else:
-            result.grade = "Weak"
+            result.grade = 'F'
