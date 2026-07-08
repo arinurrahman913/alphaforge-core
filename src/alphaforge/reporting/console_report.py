@@ -41,6 +41,7 @@ class ConsoleReport:
             print(f"Current Price  : {format_money(quote.current_price)}")
             print(f"Previous Close : {format_money(quote.previous_close)}")
             print(f"Change         : {format_money(quote.change)} ({format_percent(quote.change_percent)})")
+            print(f"Market State   : {quote.market_state}")
         print()
 
         print("=" * 80)

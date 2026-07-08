@@ -63,14 +63,6 @@ def get_latest_news(ticker: str) -> list[NewsArticle]:
 
     return articles
 
-if __name__ == "__main__":
-    news = get_latest_news("RKLB")
-
-    for article in news:
-        print(article.title)
-        print(article.publisher)
-        print(article.link)
-        print("-" * 50)
 
 def get_financial_snapshot(ticker: str) -> FinancialSnapshot:
     """
@@ -103,6 +95,7 @@ def get_financial_snapshot(ticker: str) -> FinancialSnapshot:
         free_cash_flow=info.get("freeCashflow"),
     )
 
+
 def get_price_history(
     ticker: str,
     period: str = "6mo",
@@ -131,6 +124,7 @@ def get_price_history(
 
     return prices
 
+
 def get_stock_quote(ticker: str) -> StockQuote:
 
     stock = yf.Ticker(ticker)
@@ -147,7 +141,7 @@ def get_stock_quote(ticker: str) -> StockQuote:
     else:
         change_percent = 0
 
-    market_state = "OPEN"
+    market_state = _get_market_state(stock, info)
 
     return StockQuote(
         ticker=ticker.upper(),
@@ -157,3 +151,33 @@ def get_stock_quote(ticker: str) -> StockQuote:
         change_percent=change_percent,
         market_state=market_state,
     )
+
+
+def _get_market_state(stock: "yf.Ticker", fast_info) -> str:
+    """
+    Determine the actual market state instead of assuming it's always open.
+
+    fast_info does not expose market state directly, so we fall back to
+    stock.info (a slower, separate request) which usually includes
+    "marketState" (e.g. "REGULAR", "PRE", "POST", "CLOSED"). If neither
+    source has it, we return "UNKNOWN" rather than guessing.
+    """
+
+    try:
+        state = stock.info.get("marketState")
+        if state:
+            return state
+    except Exception:
+        pass
+
+    return "UNKNOWN"
+
+
+if __name__ == "__main__":
+    news = get_latest_news("RKLB")
+
+    for article in news:
+        print(article.title)
+        print(article.publisher)
+        print(article.link)
+        print("-" * 50)
