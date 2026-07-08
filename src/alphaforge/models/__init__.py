@@ -11,6 +11,11 @@ from alphaforge.models.analysis import (
 
 from alphaforge.models.company import Company
 from alphaforge.models.financial import FinancialSnapshot
+from alphaforge.models.institutional import (
+    FundHolding,
+    FundPosition,
+    InstitutionalOwnership,
+)
 from alphaforge.models.news import NewsArticle
 from alphaforge.models.price import PriceBar
 from alphaforge.models.price_summary import PriceSummary
@@ -31,6 +36,9 @@ __all__ = [
     "AnalysisScore",
     "Company",
     "FinancialSnapshot",
+    "FundHolding",
+    "FundPosition",
+    "InstitutionalOwnership",
     "NewsArticle",
     "PriceBar",
     "PriceHistory",

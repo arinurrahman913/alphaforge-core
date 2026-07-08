@@ -5,6 +5,37 @@ from alphaforge.foundation.formatter import (
 )
 
 
+def _format_change_label(position) -> str:
+    """
+    Build the human-readable label for a fund's position change.
+
+    Deliberately NOT a dict literal keyed by change_type — Python
+    evaluates every value in a dict literal immediately, regardless of
+    which key is eventually looked up via .get(). That previously
+    crashed with `TypeError: unsupported format string passed to
+    NoneType.__format__` whenever change_type was "NEW_POSITION" (whose
+    change_percent is None), because the "INCREASED"/"DECREASED" f-string
+    branches were still evaluated even though unused.
+    """
+
+    if position.change_type == "NEW_POSITION":
+        return "NEW POSITION this quarter"
+
+    if position.change_type == "INCREASED":
+        return f"increased {position.change_percent:+.1f}%"
+
+    if position.change_type == "DECREASED":
+        return f"decreased {position.change_percent:+.1f}%"
+
+    if position.change_type == "UNCHANGED":
+        return "unchanged"
+
+    if position.change_type == "SOLD_OUT":
+        return "SOLD OUT this quarter"
+
+    return "-"
+
+
 class ConsoleReport:
 
     def render(self, result: dict):
@@ -18,6 +49,7 @@ class ConsoleReport:
         analysis = result["technical_analysis"]
         news = result["news"]
         financial_score = result.get("financial_score")
+        institutional = result.get("institutional_ownership")
 
         print("=" * 80)
         print("AlphaForge Core v0.1.0".center(80))
@@ -133,6 +165,37 @@ class ConsoleReport:
             print("----------")
             print(f"SMA20 : {format_money(technical.sma20.value)}")
             print(f"SMA50 : {format_money(technical.sma50.value)}")
+        print()
+
+        print("=" * 80)
+        print("INSTITUTIONAL OWNERSHIP (13F)")
+        print("=" * 80)
+        print("Note: based on quarterly SEC 13F filings, up to 45 days")
+        print("delayed. Long U.S. equity positions only — no shorts,")
+        print("options, or cash. Covers a curated list of tracked funds")
+        print("only, not the full universe of institutional filers.")
+        print()
+
+        if institutional is None or institutional.total_funds_holding == 0:
+            print("No holdings found among tracked funds for this quarter.")
+        else:
+            print(f"Held by {institutional.total_funds_holding} tracked fund(s):")
+            print()
+            for position in institutional.positions:
+
+                if position.current_holding is None and position.change_type != "SOLD_OUT":
+                    continue
+
+                label = _format_change_label(position)
+
+                print(f"✓ {position.fund_name:<28} — {label}")
+
+                if position.current_holding is not None:
+                    print(
+                        f"   Shares: {position.current_holding.shares:,}  "
+                        f"Value: {format_money(position.current_holding.value_usd)}"
+                    )
+                print()
         print()
 
         print("=" * 80)

@@ -7,6 +7,7 @@ from alphaforge.scoring.financial_engine import FinancialScoringEngine
 from alphaforge.services.company_service import get_company_profile
 from alphaforge.services.evidence_service import build_evidence
 from alphaforge.services.financial_service import get_financial
+from alphaforge.services.institutional_service import get_institutional_ownership
 from alphaforge.services.knowledge_service import build_knowledge
 from alphaforge.services.news_service import get_news
 from alphaforge.services.price_summary_service import get_price_summary
@@ -101,6 +102,25 @@ class AnalysisEngine:
                 lambda: self.financial_scoring.score(financial),
             )
 
+        #
+        # NEW : Institutional Ownership (13F tracking)
+        #
+        # Only attempted if we have a company name to match against, since
+        # 13F filings identify holdings by name/CUSIP rather than ticker.
+        # This stage makes several external network calls (SEC EDGAR) and
+        # is the slowest stage in the pipeline — expect noticeably longer
+        # run times when this succeeds.
+        #
+
+        institutional_ownership = None
+
+        if company is not None:
+
+            institutional_ownership = self._safe_execute(
+                "institutional_ownership",
+                lambda: get_institutional_ownership(ticker, company.name),
+            )
+
         return {
             "ticker": ticker,
             "company": company,
@@ -114,6 +134,7 @@ class AnalysisEngine:
             "evidence": evidence,
             "reasoning": reasoning,
             "financial_score": financial_score,
+            "institutional_ownership": institutional_ownership,
             "metadata": self.metadata,
         }
 
