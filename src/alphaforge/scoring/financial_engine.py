@@ -40,7 +40,12 @@ class FinancialScoringEngine:
         score = 0
         reason = "ROE below preferred threshold."
 
-        roe = financial.roe * 100 if financial.roe is not None and financial.roe <= 1 else financial.roe
+        # yfinance selalu mengembalikan ROE dalam bentuk desimal (mis. 0.3969
+        # untuk 39.69%, atau 1.1429 untuk 114.29% pada perusahaan dengan
+        # buyback besar / equity kecil). Tidak ada kasus di mana yfinance
+        # mengembalikannya sudah dalam bentuk persen, jadi heuristik
+        # "<=1 berarti desimal" dihapus karena salah untuk ROE > 100%.
+        roe = financial.roe * 100
 
         if roe >= 20:
             score = 10
@@ -67,7 +72,9 @@ class FinancialScoringEngine:
         if financial.gross_margin is None:
             return
 
-        margin = financial.gross_margin * 100 if financial.gross_margin is not None and financial.gross_margin <= 1 else financial.gross_margin
+        # Sama seperti ROE: yfinance selalu memberikan gross margin dalam
+        # bentuk desimal murni, tidak perlu heuristik konversi bersyarat.
+        margin = financial.gross_margin * 100
 
         if margin >= 60:
             result.total += 15
