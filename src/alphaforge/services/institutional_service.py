@@ -23,6 +23,13 @@ def get_institutional_ownership(
     all 5000+ 13F filers. A fund not appearing in the results does not
     necessarily mean no institution holds the stock — it means none of
     the *tracked* funds do.
+
+    This fetches every fund's holdings on demand, which is fine for a
+    single ticker (the `analyze` command). Do NOT call this in a loop
+    over many tickers — each call repeats ~20 SEC EDGAR requests. For
+    scanning a watchlist, fetch once with `fetch_all_fund_quarters()`
+    and call `match_ownership_from_cache()` per ticker instead (see
+    `scan_service.py`).
     """
 
     ownership = InstitutionalOwnership(
@@ -32,7 +39,12 @@ def get_institutional_ownership(
 
     for fund in TRACKED_FUNDS:
 
-        position = _get_fund_position(fund, company_name)
+        quarters = _fetch_fund_quarters(fund)
+
+        if quarters is None:
+            continue
+
+        position = _match_fund_position(fund, quarters, company_name)
 
         if position is not None:
             ownership.positions.append(position)
@@ -40,21 +52,74 @@ def get_institutional_ownership(
     return ownership
 
 
-def _get_fund_position(fund: dict, company_name: str) -> FundPosition | None:
+def fetch_all_fund_quarters() -> dict:
     """
-    Fetch a single fund's last two quarterly filings and determine its
-    position (and change) for the given company. Returns None only if
-    the fund's filings themselves could not be fetched at all — a fund
-    that simply doesn't hold the stock still returns a FundPosition with
-    change_type reflecting that (or is skipped by the caller if neither
-    quarter shows a holding).
+    Fetch the last two quarterly 13F filings for every tracked fund,
+    ONCE — keyed by fund CIK. Intended to be called a single time
+    before scanning a whole watchlist, then reused via
+    `match_ownership_from_cache()` for every ticker in it. This is what
+    keeps a scan of 50-100 tickers from repeating ~20 SEC EDGAR requests
+    per ticker.
     """
 
+    cache = {}
+
+    for fund in TRACKED_FUNDS:
+        cache[fund["cik"]] = _fetch_fund_quarters(fund)
+
+    return cache
+
+
+def match_ownership_from_cache(
+    ticker: str,
+    company_name: str,
+    fund_quarters_cache: dict,
+) -> InstitutionalOwnership:
+    """
+    Same matching logic as `get_institutional_ownership`, but against
+    already-fetched fund holdings (from `fetch_all_fund_quarters()`)
+    instead of making network calls on every invocation.
+    """
+
+    ownership = InstitutionalOwnership(
+        ticker=ticker.upper(),
+        company_name=company_name,
+    )
+
+    for fund in TRACKED_FUNDS:
+
+        quarters = fund_quarters_cache.get(fund["cik"])
+
+        if quarters is None:
+            continue
+
+        position = _match_fund_position(fund, quarters, company_name)
+
+        if position is not None:
+            ownership.positions.append(position)
+
+    return ownership
+
+
+def _fetch_fund_quarters(fund: dict):
+
     try:
-        quarters = get_fund_holdings(fund["cik"], quarters_back=2)
+        return get_fund_holdings(fund["cik"], quarters_back=2)
     except Exception as e:
         print(f"Failed to fetch holdings for {fund['name']}: {e}")
         return None
+
+
+def _match_fund_position(
+    fund: dict,
+    quarters: list,
+    company_name: str,
+) -> FundPosition | None:
+    """
+    Determine a single fund's position (and change) for the given
+    company from already-fetched quarterly holdings. Returns None if
+    neither quarter shows a holding for this company at this fund.
+    """
 
     current_holdings = quarters[0] if len(quarters) > 0 else []
     previous_holdings = quarters[1] if len(quarters) > 1 else []
