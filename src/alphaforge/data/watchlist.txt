@@ -1,0 +1,48 @@
+# AlphaForge Watchlist
+# One ticker per line. Blank lines and lines starting with '#' are ignored.
+# Edit freely — this is your custom scan universe.
+#
+# Curated manually (no automatic sector screener yet — see note at the
+# bottom of chat). Grouped by theme for your own reference; the scan
+# command reads all of them the same way regardless of grouping.
+
+# --- AI: chips / infrastructure ---
+NVDA
+AMD
+AVGO
+TSM
+ARM
+MRVL
+SMCI
+ANET
+
+# --- AI: platform / software / applied ---
+MSFT
+GOOGL
+META
+AMZN
+ORCL
+PLTR
+SNOW
+AI
+CRWD
+
+# --- Energy: traditional oil & gas ---
+XOM
+CVX
+COP
+OXY
+SLB
+
+# --- Energy: nuclear / power for AI datacenter demand ---
+CEG
+VST
+OKLO
+SMR
+
+# --- Energy: renewables / alternative ---
+NEE
+ENPH
+FSLR
+BE
+PLUG
