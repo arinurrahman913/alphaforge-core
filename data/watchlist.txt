@@ -1,0 +1,44 @@
+# AlphaForge Watchlist — Future Themes
+# One ticker per line. Lines starting with # are ignored.
+# Curated manually — review and adjust as the story on each company changes.
+
+# ─── AI / Compute ───
+NVDA    # Nvidia — AI chips
+AMD     # AMD — AI chips
+MSFT    # Microsoft — AI infra, OpenAI stake
+GOOGL   # Alphabet — Gemini, TPU
+META    # Meta — AI infra, Llama
+PLTR    # Palantir — AI/data analytics for enterprise & defense
+CRM     # Salesforce — enterprise AI (Agentforce)
+ORCL    # Oracle — AI cloud infra
+SNOW    # Snowflake — data/AI platform
+AI      # C3.ai — enterprise AI software
+SOUN    # SoundHound AI — voice AI
+PATH    # UiPath — AI automation
+UPST    # Upstart — AI lending
+
+# ─── Space ───
+RKLB    # Rocket Lab — launch + space systems
+ASTS    # AST SpaceMobile — satellite-direct-to-cell
+LUNR    # Intuitive Machines — lunar landers
+RDW     # Redwire — space infrastructure
+LMT     # Lockheed Martin — defense/space prime
+NOC     # Northrop Grumman — defense/space prime
+BA      # Boeing — space + defense
+RTX     # RTX (Raytheon) — defense/space
+
+# ─── Future Mobility ───
+TSLA    # Tesla — EV, energy, robotics/AI (Optimus, FSD)
+ACHR    # Archer Aviation — eVTOL air taxis
+JOBY    # Joby Aviation — eVTOL air taxis
+
+# ─── Future Energy ───
+ENPH    # Enphase — solar microinverters
+FSLR    # First Solar — solar manufacturing
+NEE     # NextEra Energy — renewables utility
+PLUG    # Plug Power — hydrogen fuel cells
+BE      # Bloom Energy — fuel cells
+OKLO    # Oklo — small modular nuclear reactors
+SMR     # NuScale Power — small modular nuclear reactors
+CCJ     # Cameco — uranium mining
+BWXT    # BWX Technologies — nuclear components

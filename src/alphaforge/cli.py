@@ -1,6 +1,7 @@
 import sys
 
 from alphaforge.commands.analyze import analyze
+from alphaforge.commands.scan import scan
 from alphaforge.foundation.version import (
     APP_DESCRIPTION,
     APP_NAME,
@@ -17,9 +18,11 @@ def run() -> None:
         command = args[1]
 
         if command == "analyze":
-
             analyze(args[2])
+            return
 
+        if command == "scan":
+            scan(args[2])
             return
 
     print("=" * 34)
@@ -30,3 +33,4 @@ def run() -> None:
     print()
     print("Usage:")
     print("python -m alphaforge.main analyze <ticker>")
+    print("python -m alphaforge.main scan <watchlist_file>")

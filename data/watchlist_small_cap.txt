@@ -1,0 +1,32 @@
+# AlphaForge Watchlist — Small/Micro Cap, Future Themes
+# One ticker per line. Inline/full-line comments with # are ignored.
+# Curated manually from public small-cap coverage (mid-2026) — market
+# caps move fast, this is a starting point, not a guarantee of "small
+# cap" status by the time you run this. `scan` checks live market cap
+# and tags each result with its actual category (nano/micro/small/mid/
+# large/mega) — cross-check that column, don't trust this list blindly.
+
+# ─── AI / Semiconductor supply chain ───
+AEHR    # Aehr Test Systems — AI chip burn-in test systems
+PLAB    # Photronics — photomasks for chipmaking
+SKYT    # SkyWater Technology — quantum/AI chip manufacturing partner
+AIP     # Arteris — network-on-chip semiconductor IP
+POET    # POET Technologies — optical interconnect for AI networks
+AXT     # AXT Inc — semiconductor substrates
+ONDS    # Ondas Holdings — AI-powered drone/autonomy systems
+ZETA    # Zeta Global — AI marketing platform
+
+# ─── Space / Earth observation / defense-adjacent ───
+BKSY    # BlackSky Technology — satellite intelligence + AI analytics
+SATL    # Satellogic — sovereign satellite operator
+SPIR    # Spire Global — satellite data (weather, maritime, aviation)
+LUNR    # Intuitive Machines — lunar landers
+RDW     # Redwire — space infrastructure
+
+# ─── Future Energy ───
+EOSE    # Eos Energy — zinc-based grid battery storage
+BW      # Babcock & Wilcox — energy/emissions control, AI infra tailwind
+CIFR    # Cipher Mining — bitcoin mining pivoting to AI compute
+
+# ─── Robotics / Autonomy ───
+SERV    # Serve Robotics — last-mile delivery robots, Nvidia-backed
